@@ -1,5 +1,6 @@
 package dev.e23.dashstar.listener;
 
+import dev.e23.dashstar.util.HibernateUtil;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -8,14 +9,13 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 @WebListener
-public class HibernateStartupListener implements ServletContextListener {
-
-    private EntityManagerFactory emf;
+public class HibernateListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        // 创建 EntityManagerFactory，即使得 Hibernate 可以管理实体类并创建数据库连接。若失败，则关闭服务器。
         try {
-            emf = Persistence.createEntityManagerFactory("default");
+            HibernateUtil.init();
         } catch (PersistenceException ex) {
             System.err.println("Database connection failed. Server will shut down.");
             shutdownServer();
@@ -24,8 +24,8 @@ public class HibernateStartupListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+        if (HibernateUtil.getEntityManagerFactory() != null && HibernateUtil.getEntityManagerFactory().isOpen()) {
+            HibernateUtil.getEntityManagerFactory().close();
         }
     }
 

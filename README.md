@@ -119,15 +119,33 @@ npm config set registry https://registry.npmmirror.com
 
 ![Tomcat Select](./assets/tomcat-select.png)
 
-搞定后，点击下一步。规范选择 Web Profile，然后点击创建。
+搞定后，点击下一步。规范选择 Web Profile，实现中额外选择 Hibernate 和 Hibernate Validator，然后点击创建。
 
 ![New Project 2](./assets/new-project-2.png)
+
+![New Project 3](./assets/new-project-3.png)
 
 刚创建完的样子基本是这样的
 
 ![Created](./assets/created.png)
 
 右侧侧边栏有一个 M 图标，这个就是 Maven，当后续修改 `pom.xml` 进行依赖删改时，点击 Maven 的刷新图标，IDEA 就会下载并导入新的依赖。
+
+当然，很多同学在 Maven 拉取依赖的时候会异常慢，此时我们就可以在 `pom.xml` 中为这个项目配置镜像仓库，这里我教大家如何配置阿里云的镜像仓库。
+
+我们打开 `pom.xml`，在 `<project>` 标签下添加如下代码（与 `<dependencies>`、`<properties>` 同级）：
+
+```xml
+<repositories>
+    <repository>
+        <id>aliyun</id>
+        <name>AliyunMaven</name>
+        <url>https://maven.aliyun.com/repository/public</url>
+    </repository>
+</repositories>
+```
+
+修改完成后，别忘了刷新 Maven。
 
 如果 IDEA 提醒你安装某些插件，建议安装，可以增强你的开发体验
 
@@ -183,7 +201,9 @@ npm install
 
 ![Frontend First Run](./assets/frontend-first-run.png)
 
-## 模型
+## 开发
+
+### 模型与持久化
 
 在设计模型前，我们需要思考 **“一个博客系统都有些什么”**，比如，一个博客系统肯定有文章，有用户，文章里面还有评论……
 
@@ -197,3 +217,108 @@ npm install
 
 你可以在[这里](./src/main/java/dev/e23/dashstar/model)查看所有的模型，但下面我会以 User 为例，讲解一次模型设计的思路。
 
+通常我们会在工件包下创建一个子包 `model` 来专门存储各类模型，比如我的工件包名是 `dev.e23.dashstar`，那么我的模型包名就是 `dev.e23.dashstar.model`。
+
+创建完 `model` 包后，在里面新建一个类 `User`，写入如下内容
+
+```java
+package dev.e23.dashstar.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data  // 表示这个类需要被 Lombok 处理，Lombok 会自动生成 getter、setter、toString、equals、hashCode 等方法
+@Entity  // 表示这是一个实体类，会被 Hibernate 管理
+@Table(name = "users")  // 表示这个实体类对应的数据库表名是 users
+public class User implements Serializable {
+
+    @Id  // 表示这个字段是主键
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 表示主键生成策略是自增
+    private Integer id;
+
+    @Column(name = "username", unique = true)  // 表示这个字段对应的数据库表中的列名是 username，并且这个字段是唯一的
+    private String username;
+
+    @Column(name = "nickname")  // 表示这个字段对应的数据库表中的列名是 nickname
+    private String nickname;
+
+    @Column(name = "password")  // 表示这个字段对应的数据库表中的列名是 password
+    private String password;
+
+    @Column(name = "role")  // 表示这个字段对应的数据库表中的列名是 role
+    private String role = "user";  // 表示这个字段的默认值是 user
+
+    public User() {}
+
+    public User(String username, String nickname, String password, String role) {
+        this.username = username;
+        this.nickname = nickname;
+        this.password = password;
+        this.role = role;
+    }
+}
+```
+
+如果你直接复制的话，可能会报错，最常见的错误就是找不到 `lombok.Data`，因为我们还没有在 `pom.xml` 中添加 Lombok 的依赖。
+
+这里简单解释一下 Lombok，Lombok 是一个 Java 库，它可以帮助我们减少代码的冗余，比如，我们不需要手动编写 getter、setter、toString、equals、hashCode 等方法，只需要在类上加上 `@Data` 注解，Lombok 就会自动生成这些方法。
+
+于是我们在 `pom.xml` 中的 `<dependencies>` 块中添加
+
+```xml
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.34</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+添加完后，不要忘记点击 Maven 的刷新按钮（后文将不会再强调这一点）！
+
+接下来各位可以依照本仓库中的其他模型的代码，自行理解并设计模型，源码中皆给予了尽可能详细的注释。
+
+看到这里，你的模型一定都设计完毕了，但是也仅仅是设计了模型，你还没有给你的应用程序配置数据库呢！（上文配置的数据库仅仅是给 IDEA 用的，你的应用程序并不知道这么一个数据库的存在）。
+
+我们这次的项目使用 Hibernate 作为 ORM 框架，所以我们需要在 `resources/META-INF` 中配置 `persistence.xml` 文件，将数据持久化交给 Hibernate。
+
+你可以直接参考[源文件](./src/main/resources/META-INF/persistence.xml)，里面写了详细的注释。
+
+但是有几点需要注意，首先就是数据库的连接地址
+
+```xml
+ <!-- 设置 MySQL 数据库 URL -->
+<property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://192.168.206.129:3306/dashstar"/>
+```
+
+并不是人人都是像我一样 `192.168.206.129` 是 MySQL 的 Host（因为我用了虚拟机，所以不能使用 `127.0.0.1`），如果你们都是按照上文配置的 MySQL，只需要将地址换成 `127.0.0.1` 即可，端口号仍然保持 `3306`。
+
+还有一点，就是我们虽然在创建项目的时候选择了 Hibernate，但是我们并没有给 Hibernate 配置 MySQL 的驱动，即下面这一行，如果你是直接复制的 `persistence.xml`，可能会报错
+
+```xml
+ <!-- 设置 MySQL 驱动 -->
+<property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+```
+
+其实解决方法很简单，只需要在 `pom.xml` 中配置一下 MySQL 的依赖即可，如下
+
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.2.0</version>
+</dependency>
+```
+
+你的 Hibernate 就已经能感知到你的 MySQL 的存在了，但是还有一条在 `persistence.xml` 中的关键配置，是一种创建数据表的新方法，即使用 Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql` 的文件进行数据库初始化。
+
+```xml
+<!-- 设置 Hibernate 自动创建数据库表，并且当实体类受到修改时修改表结构 -->
+<property name="hibernate.hbm2ddl.auto" value="update"/>
+```
+
+还没完，我们需要在工件包中创建一个 `lisener` 子包，创建一个新类 `HibernateListener`，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
+
+此时，你若在右上角通过 Tomcat 启动项目，则会看到 `org.hibernate` 开头的日志。
