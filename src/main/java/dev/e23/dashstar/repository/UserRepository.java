@@ -1,6 +1,6 @@
 package dev.e23.dashstar.repository;
 
-import dev.e23.dashstar.model.Article;
+import dev.e23.dashstar.model.User;
 import dev.e23.dashstar.util.HibernateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
@@ -9,30 +9,30 @@ import jakarta.persistence.PersistenceException;
 import java.util.List;
 
 @ApplicationScoped
-public class ArticleRepository {
+public class UserRepository {
 
-    public List<Article> findAll() throws PersistenceException {
+    public List<User> findAll() throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
-        List<Article> articles = null;
+        List<User> users = null;
         try {
             em.getTransaction().begin();
-            articles = em.createQuery("SELECT a FROM Article a", Article.class).getResultList();
+            users = em.createQuery("SELECT u FROM User u", User.class).getResultList();
             em.getTransaction().commit();
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("articles_not_found", e);
+            throw new RuntimeException("users_not_found", e);
         } finally {
             em.close();
         }
-        return articles;
+        return users;
     }
 
-    public Article findByID(Integer id) throws PersistenceException {
+    public User findByID(Integer id) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
-        Article article = null;
+        User user = null;
         try {
             em.getTransaction().begin();
-            article = em.createQuery("SELECT a FROM Article a WHERE a.id = :id", Article.class).setParameter("id", id).getSingleResult();
+            user = em.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class).setParameter("id", id).getSingleResult();
             em.getTransaction().commit();
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
@@ -40,32 +40,34 @@ public class ArticleRepository {
         } finally {
             em.close();
         }
-        return article;
+        return user;
     }
 
-    public void create(Article article) throws PersistenceException {
+    public User findByUsername(String username) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
+        User user = null;
         try {
             em.getTransaction().begin();
-            em.persist(article);
+            user = em.createQuery("SELECT u FROM User u WHERE u.username = :username", User.class).setParameter("username", username).getSingleResult();
             em.getTransaction().commit();
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("", e);
+            throw new RuntimeException("user_not_found", e);
         } finally {
             em.close();
         }
+        return user;
     }
 
-    public void update(Article article) throws PersistenceException {
+    public void create(User user) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             em.getTransaction().begin();
-            em.merge(article);
+            em.persist(user);
             em.getTransaction().commit();
         } catch (PersistenceException e) {
             em.getTransaction().rollback();
-            throw new RuntimeException("", e);
+            throw new RuntimeException("user_already_exists", e);
         } finally {
             em.close();
         }

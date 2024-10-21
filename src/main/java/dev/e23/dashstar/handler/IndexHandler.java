@@ -1,10 +1,10 @@
-package dev.e23.dashstar.controller;
+package dev.e23.dashstar.handler;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
 @Path("/")
-public class IndexController {
+public class IndexHandler {
 
     @GET
     public String index() {

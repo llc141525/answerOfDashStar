@@ -26,12 +26,4 @@ public class User implements Serializable {
     @Column(name = "role")  // 表示这个字段对应的数据库表中的列名是 role
     private String role = "user";  // 表示这个字段的默认值是 user
 
-    public User() {}
-
-    public User(String username, String nickname, String password, String role) {
-        this.username = username;
-        this.nickname = nickname;
-        this.password = password;
-        this.role = role;
-    }
 }

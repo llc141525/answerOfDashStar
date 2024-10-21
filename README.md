@@ -319,6 +319,6 @@ public class User implements Serializable {
 <property name="hibernate.hbm2ddl.auto" value="update"/>
 ```
 
-还没完，我们需要在工件包中创建一个 `lisener` 子包，创建一个新类 `HibernateListener`，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
+还没完，我们需要在工件包中创建一个 `listener` 子包，创建一个新类 `HibernateListener`，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
 
 此时，你若在右上角通过 Tomcat 启动项目，则会看到 `org.hibernate` 开头的日志。
