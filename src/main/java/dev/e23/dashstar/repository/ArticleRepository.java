@@ -8,21 +8,23 @@ import jakarta.persistence.PersistenceException;
 
 import java.util.List;
 
-@ApplicationScoped
+@ApplicationScoped  // 声明这是一个应用范围的 Bean，需要的地方可以使用 @Inject 注入
 public class ArticleRepository {
 
     public List<Article> findAll() throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
         List<Article> articles = null;
         try {
-            em.getTransaction().begin();
-            articles = em.createQuery("SELECT a FROM Article a", Article.class).getResultList();
-            em.getTransaction().commit();
+            em.getTransaction().begin();  // 开始事务
+            articles = em
+                    .createQuery("SELECT a FROM Article a", Article.class)
+                    .getResultList();  // 查询所有文章
+            em.getTransaction().commit();  // 提交事务
         } catch (PersistenceException e) {
-            em.getTransaction().rollback();
+            em.getTransaction().rollback();  // 当出了异常时回滚事务
             throw new RuntimeException("articles_not_found", e);
         } finally {
-            em.close();
+            em.close();  // 关闭 EntityManager
         }
         return articles;
     }
@@ -31,14 +33,17 @@ public class ArticleRepository {
         EntityManager em = HibernateUtil.getEntityManager();
         Article article = null;
         try {
-            em.getTransaction().begin();
-            article = em.createQuery("SELECT a FROM Article a WHERE a.id = :id", Article.class).setParameter("id", id).getSingleResult();
-            em.getTransaction().commit();
+            em.getTransaction().begin();  // 开始事务
+            article = em
+                    .createQuery("SELECT a FROM Article a WHERE a.id = :id", Article.class)
+                    .setParameter("id", id)
+                    .getSingleResult();  // 查询指定 ID 的文章
+            em.getTransaction().commit();  // 提交事务
         } catch (PersistenceException e) {
-            em.getTransaction().rollback();
-            throw new RuntimeException("user_not_found", e);
+            em.getTransaction().rollback();  // 当出了异常时回滚事务
+            throw new RuntimeException("article_not_found", e);
         } finally {
-            em.close();
+            em.close();  // 关闭 EntityManager
         }
         return article;
     }
@@ -46,28 +51,28 @@ public class ArticleRepository {
     public void create(Article article) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            em.getTransaction().begin();
-            em.persist(article);
-            em.getTransaction().commit();
+            em.getTransaction().begin();  // 开始事务
+            em.persist(article);  // 保存文章
+            em.getTransaction().commit();  // 提交事务
         } catch (PersistenceException e) {
-            em.getTransaction().rollback();
+            em.getTransaction().rollback();  // 当出了异常时回滚事务
             throw new RuntimeException("", e);
         } finally {
-            em.close();
+            em.close();  // 关闭 EntityManager
         }
     }
 
     public void update(Article article) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
-            em.getTransaction().begin();
-            em.merge(article);
-            em.getTransaction().commit();
+            em.getTransaction().begin();  // 开始事务
+            em.merge(article);  // 更新文章
+            em.getTransaction().commit();  // 提交事务
         } catch (PersistenceException e) {
-            em.getTransaction().rollback();
+            em.getTransaction().rollback();  // 当出了异常时回滚事务
             throw new RuntimeException("", e);
         } finally {
-            em.close();
+            em.close();  // 关闭 EntityManager
         }
     }
 }

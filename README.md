@@ -281,6 +281,8 @@ npm install
 
 还没完，我们需要在工件包中创建一个 `listener` 子包，创建一个新类 `HibernateListener`，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
 
+然后你会发现，我们用到了一个叫 `HibernateUtil` 的工具类，这个工具是来创建 Hibernate 的 `EntityManagerFactory` 的，并且可以给仓库层分发 `EntityManager`（你一定会用到的）。
+
 此时，你若在右上角通过 Tomcat 启动项目，则会看到 `org.hibernate` 开头的日志。
 
 有了模型还不够，我们需要设计每个模型与数据库交互的方法，这些与数据库交互有关的我们统称仓库层（或者 DAO 层）

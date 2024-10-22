@@ -33,11 +33,11 @@ public class Comment implements Serializable {
     private User user;  // 表示这个字段对应的实体类是 User，实际上存储进数据库的是 User 的 id
 
     @Column(name = "user_id", insertable = false, updatable = false)
-    @JsonProperty("user_id")
+    @JsonProperty("user_id")  // 表示这个字段在 JSON 序列化时，字段名是 user_id（不然就会是 userId）
     private Integer userId;
 
     @Column(name = "created_at")
-    @JsonProperty("created_at")
+    @JsonProperty("created_at")  // 表示这个字段在 JSON 序列化时，字段名是 created_at（不然就会是 createdAt）
     private Long createdAt;
 
 }
