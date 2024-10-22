@@ -6,6 +6,8 @@
 
 总的来说，我们需要使用本学期学习过的内容（或者尚未学习的内容），完成一个简易的 Blog（博客）后端。学有余力的同学，可以上手现代化前端开发，实现一个更加美观的博客系统。
 
+教程的文字部分只会在前部分于 README.md 文档内详细讲解，至于开发部分，README.md 只会在必要的地方进行讲解，具体的讲解都在源码内。
+
 ### 考核
 
 因为本学期学习的是 JavaEE，内容更加偏向后端开发，所以对于前端不做要求。只要完成后端部分，则可获得绝大部分分数，剩下的前端作为加分项。
@@ -201,7 +203,7 @@ npm install
 
 ![Frontend First Run](./assets/frontend-first-run.png)
 
-## 开发
+## 开发（后端）
 
 ### 模型与持久化
 
@@ -215,53 +217,11 @@ npm install
 
 为什么我们需要模型？ 因为我们需要在数据库中存储各种各样的数据，而模型就是用来描述这些数据的，比如，文章有标题、内容、作者、发布时间等属性，用户有用户名、昵称、密码等属性，评论有评论内容、评论人、评论时间等属性。
 
-你可以在[这里](./src/main/java/dev/e23/dashstar/model)查看所有的模型，但下面我会以 User 为例，讲解一次模型设计的思路。
-
 通常我们会在工件包下创建一个子包 `model` 来专门存储各类模型，比如我的工件包名是 `dev.e23.dashstar`，那么我的模型包名就是 `dev.e23.dashstar.model`。
 
-创建完 `model` 包后，在里面新建一个类 `User`，写入如下内容
+你可以在[这里](./src/main/java/dev/e23/dashstar/model)查看所有的模型。着重查看 [`User`](./src/main/java/dev/e23/dashstar/model/User.java) 模型。
 
-```java
-package dev.e23.dashstar.model;
-
-import jakarta.persistence.*;
-import lombok.Data;
-
-import java.io.Serializable;
-
-@Data  // 表示这个类需要被 Lombok 处理，Lombok 会自动生成 getter、setter、toString、equals、hashCode 等方法
-@Entity  // 表示这是一个实体类，会被 Hibernate 管理
-@Table(name = "users")  // 表示这个实体类对应的数据库表名是 users
-public class User implements Serializable {
-
-    @Id  // 表示这个字段是主键
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 表示主键生成策略是自增
-    private Integer id;
-
-    @Column(name = "username", unique = true)  // 表示这个字段对应的数据库表中的列名是 username，并且这个字段是唯一的
-    private String username;
-
-    @Column(name = "nickname")  // 表示这个字段对应的数据库表中的列名是 nickname
-    private String nickname;
-
-    @Column(name = "password")  // 表示这个字段对应的数据库表中的列名是 password
-    private String password;
-
-    @Column(name = "role")  // 表示这个字段对应的数据库表中的列名是 role
-    private String role = "user";  // 表示这个字段的默认值是 user
-
-    public User() {}
-
-    public User(String username, String nickname, String password, String role) {
-        this.username = username;
-        this.nickname = nickname;
-        this.password = password;
-        this.role = role;
-    }
-}
-```
-
-如果你直接复制的话，可能会报错，最常见的错误就是找不到 `lombok.Data`，因为我们还没有在 `pom.xml` 中添加 Lombok 的依赖。
+如果你直接复制 `User` 的话，可能会报错，最常见的错误就是找不到 `lombok.Data`，因为我们还没有在 `pom.xml` 中添加 Lombok 的依赖。
 
 这里简单解释一下 Lombok，Lombok 是一个 Java 库，它可以帮助我们减少代码的冗余，比如，我们不需要手动编写 getter、setter、toString、equals、hashCode 等方法，只需要在类上加上 `@Data` 注解，Lombok 就会自动生成这些方法。
 
@@ -322,3 +282,125 @@ public class User implements Serializable {
 还没完，我们需要在工件包中创建一个 `listener` 子包，创建一个新类 `HibernateListener`，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
 
 此时，你若在右上角通过 Tomcat 启动项目，则会看到 `org.hibernate` 开头的日志。
+
+有了模型还不够，我们需要设计每个模型与数据库交互的方法，这些与数据库交互有关的我们统称仓库层（或者 DAO 层）
+
+通常我们会在工件包下创建一个子包 `repository` 来专门存储各类模型对应的仓库层方法，比如我的工件包名是 `dev.e23.dashstar`，那么我的仓库层包名就是 `dev.e23.dashstar.repository`（当然也可以命名为 `dao`）。
+
+详细的仓库层设计你可以看[这里](./src/main/java/dev/e23/dashstar/repository)。着重查看 [`UserRepository`](./src/main/java/dev/e23/dashstar/repository/UserRepository.java) 的设计，其他都是触类旁通。
+
+### 鉴权与过滤器
+
+![Login Flow](./assets/login-flow.png)
+
+> 什么是 JWT？
+> 
+> JWT（JSON Web Token）是一个开放标准（RFC 7519），它定义了一种紧凑且自包含的方式，用于在各方之间以JSON对象的形式安全地传输信息。由于它的紧凑和自包含特性，JWT常用于身份验证和信息交换的场景。
+> 
+> 简单来说，就是一个能足矣确定携带某条 JWT 的请求属于某个用户，且能保证确实是这个用户。如果你想要看看 JWT 到底长啥样，可以在[这个网站](https://jwt.io/)观察一下。
+
+上图就是大部分 Web 应用程序对登录与鉴权的处理，通常 **拦截请求验证 JWT Token** 是放在 **过滤器** 中的，也算是一种中间件。可以理解为，所有的请求在被真正处理之前，会先被过滤器处理。
+
+为了方便起见，我们就将所有与鉴权中间件相关的内容放在 `security` 包下。
+
+你可以在[这里](./src/main/java/dev/e23/dashstar/security/AuthenticationFilter.java)查看过滤器 `AuthenticationFilter` 的实现。
+
+并且我们还需要一个 `@Secured` 注解（注意是注解，不是注释，注解是可编程的），用来注解在需要鉴权的控制器上（在讲控制器之前，你可以把控制器理解为请求进来时经过的方法）。你可以在[这里](./src/main/java/dev/e23/dashstar/security/Secured.java)查看 `@Secured` 注解的定义，定义其实没什么实际含义，真正的逻辑已经写在 `AuthenticationFilter` 的 `extractRoles` 方法中了。
+
+当然还有需要注意的点，就是我们想要使用 JWT，但我们并没有添加 JWT 相关的依赖，所以，别忘了添加下面几条（这里使用 JJWT）
+
+```xml
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.5</version>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.11.5</version>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.module</groupId>
+    <artifactId>jackson-module-jaxb-annotations</artifactId>
+    <version>2.18.0</version>
+</dependency>
+```
+
+### 业务与 REST 控制器
+
+> 什么是业务？
+> 
+> 在软件开发中，“业务”通常指的是应用程序的核心功能和逻辑，这些功能和逻辑直接与实现应用程序的目标相关。业务逻辑涉及处理数据、执行计算、应用规则以及确保数据完整性和一致性的代码。
+> 
+> 简单来说，就是你的应用程序要实现什么功能。
+
+> 什么是 REST 控制器？
+> 
+> REST 控制器是遵循 REST（Representational State Transfer）架构风格的 Web 应用程序中的一个组件，它负责处理传入的 HTTP 请求并将它们映射到相应的业务逻辑处理上。
+> 
+> 简单来说，就是你的应用程序的接口，外面的请求只能通过这些接口来使用你的业务。而 REST 则是一种要求，要求我们将所有的接口都按照 **资源** 进行分类，资源可以简单地理解为我们所定义的模型们。
+
+通常我们写业务层和控制层的时候，需要两个包，一个叫 `service`，一个叫 `controller`，但这一次，为了方便教学和理解，我们只采用一个层就完成两个层需要做的工作，我给这个包命名为 `handler`，你可以在[这里](./src/main/java/dev/e23/dashstar/handler)查看所有的 `handler`。
+
+具体的代码实现，我都在源码中以注释的形式描述清楚了，下面讲解的是设计思路。
+
+#### 用户
+
+我们思考一下，与用户（这里说的是用户这个模型，不是真正的用户）直接相关的操作（尽可能往少但是必要的想），是不是就下面这些？
+
+- 登录（Login）
+- 注册（Register）
+- 获取所有用户信息（GetAllUsers）
+- 获取指定 ID 用户的信息（GetUserById）
+
+具体的解释，请务必到[源码](./src/main/java/dev/e23/dashstar/handler/UserHandler.java)中查看，有代码才能方便理解！
+
+但在这里还要多提一句，就是有关密码，即 `User` 模型的 `password` 字段，我们不能明文存储用户的密码，你可以用 SHA256、MD5 等等进行加密，但其实有一个专门用于加密密码的算法，叫做 `BCrypt`，在 `UserHandler` 中对密码进行处理时，我们引用了 jbcrypt 库，所以你要添加依赖
+
+```xml
+<dependency>
+    <groupId>org.mindrot</groupId>
+    <artifactId>jbcrypt</artifactId>
+    <version>0.4</version>
+</dependency>
+```
+
+#### 文章
+
+- 获取所有文章（GetAllArticles）
+- 获取指定 ID 的文章（GetArticleById）
+- 创建文章（CreateArticle）
+- *获取指定 ID 的文章的附属评论（GetComments）*
+
+#### 评论
+
+- 创建评论（CreateComment）
+
+这里一起讲解一下文章和评论的设计，上方有一个标注了斜体的方法，它是通过文章 ID 获得指定文章的所有评论，那么问题在于，按照 REST 的设计理念，它到底应该被归为文章，还是应该被归为评论呢？
+
+答案是不确定的，因为你可以这样获得指定文章的评论（如上所述）`GET /api/articles/{id}/comments`，当然你也可以像这样获得 `GET /api/comments?article_id={id}`，所以说，这个问题它没有固定答案，不论你将这个方法归属在哪个资源（文章、评论）下，它都是正确的。
+
+但你也看见了，在这里，我愿意将这个方法归属于文章资源。
+
+## 开发（前端）
+
+## 附录
+
+### 附加题
+
+- 仔细观察有关用户的输出，真的应该携带密码的哈希值吗？如果我不想携带密码哈希值输出，请问我该怎么办？（+5）
+- 身为管理员，竟然不能删除评论，万一别人评论了不好的话怎么办？（+10）
+- 文章太多了，一个页面（首页）如果显示全部的文章，不仅看上去不美观，性能也会大打折扣。请问使用什么方法解决这个问题？ （+10）
+- 一个成熟的博客应该有一个分类系统，或者标签系统，这样能够帮助用户快速检索想看的文章，请问你能够在此基础上设计出一个标签或者分类系统吗？（+15）
+- 前端太素了，能不能好看一点？（需要你自行设计页面，这涉及很多内容，React 和 Mui 都需要点理解，当然，如果你足够强的话，可以把前端推翻重来）（+15）
+
+### 小技巧
+
+如果你实在觉得跟着教程做难度很大，不妨试试看直接克隆整个代码仓库，然后自己想方法跑起来。
