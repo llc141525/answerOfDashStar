@@ -149,7 +149,7 @@ npm config set registry https://registry.npmmirror.com
 
 修改完成后，别忘了刷新 Maven。
 
-如果 IDEA 提醒你安装某些插件，建议安装，可以增强你的开发体验
+如果 IDEA 提醒你安装某些插件，建议安装，可以增强你的开发体验。
 
 ![JSF EJB](./assets/jsf-ejb.png)
 
@@ -158,6 +158,16 @@ npm config set registry https://registry.npmmirror.com
 ![Tomcat Config](./assets/tomcat-config.png)
 
 此时点击右上角的绿色三角图标，即可启动项目，启动后 IDEA 会自动打开浏览器，访问 `http://localhost:8080/api/hello-world`，如果看到 `Hello, World!`，那么恭喜你，你的项目已经成功启动了。
+
+如果遇到 Tomcat 无法启动，并且 Tomcat Localhost 日志中报错为 `java.lang.NoClassDefFoundError: jakarta/activation/Datasource` 的话，那么你需要在 `pom.xml` 中添加下面这条依赖
+
+```xml
+<dependency>
+    <groupId>jakarta.activation</groupId>
+    <artifactId>jakarta.activation-api</artifactId>
+    <version>2.1.3</version>
+</dependency>
+```
 
 顺便我们来检验一下 MySQL 是否能够连接，点击 IDEA 右侧侧边栏的数据库图标，然后点击 `+`，数据源，MySQL，然后按照下图配置。如果你需要下载缺少的驱动文件，直接点击下载即可。用户名和密码都是 `root`，配置完成后点击测试连接，成功后即可点击确定。恭喜你，MySQL 也是能用的了。
 
