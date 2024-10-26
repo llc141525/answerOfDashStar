@@ -1,21 +1,32 @@
-import { useState } from "react";
+// 根组件
+
+import { RouterProvider } from "react-router-dom";
+import router from "@/router";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import useSiteStore from "@/stores/site.ts";
+import { ThemeContext } from "@emotion/react";
+import { useMemo } from "react";
+
+
 function App() {
-    const [count, setCount] = useState(0);
+    const siteStore = useSiteStore();
+
+    const theme = useMemo(() => createTheme({
+        palette: {
+            mode: siteStore?.isDarkMode ? "dark" : "light",
+        },
+    }), [siteStore?.isDarkMode]);
 
     return (
         <>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+            <ThemeContext.Provider value={{ toggleTheme: siteStore?.toggleTheme, isDarkMode: siteStore?.isDarkMode }}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline /> {/* 确保 MUI 的样式全局生效 */}
+                    <RouterProvider router={router} fallbackElement={<div>加载中. . . .</div>} />
+                </ThemeProvider>
+            </ThemeContext.Provider>
+
         </>
     );
 }
