@@ -159,7 +159,6 @@ Tomcat 的地址进行配置。
 我们打开 `pom.xml`，在 `<project>` 标签下添加如下代码（与 `<dependencies>`、`<properties>` 同级）：
 
 ```xml
-
 <repositories>
     <repository>
         <id>aliyun</id>
@@ -186,7 +185,6 @@ Tomcat 的地址进行配置。
 日志中报错为 `java.lang.NoClassDefFoundError: jakarta/activation/Datasource` 的话，那么你需要在 `pom.xml` 中添加下面这条依赖
 
 ```xml
-
 <dependency>
     <groupId>jakarta.activation</groupId>
     <artifactId>jakarta.activation-api</artifactId>
@@ -274,8 +272,6 @@ npm install vite --save-dev
 
 ![Frontend First Run](./assets/frontend-first-run.png)
 
-
-
 ## 开发（后端）
 
 ### 模型与持久化
@@ -304,7 +300,6 @@ getter、setter、toString、equals、hashCode 等方法，只需要在类上加
 于是我们在 `pom.xml` 中的 `<dependencies>` 块中添加
 
 ```xml
-
 <dependency>
     <groupId>org.projectlombok</groupId>
     <artifactId>lombok</artifactId>
@@ -346,7 +341,6 @@ MySQL，只需要将地址换成 `127.0.0.1` 即可，端口号仍然保持 `330
 其实解决方法很简单，只需要在 `pom.xml` 中配置一下 MySQL 的依赖即可，如下
 
 ```xml
-
 <dependency>
     <groupId>com.mysql</groupId>
     <artifactId>mysql-connector-j</artifactId>
@@ -404,27 +398,26 @@ Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql`
 当然还有需要注意的点，就是我们想要使用 JWT，但我们并没有添加 JWT 相关的依赖，所以，别忘了添加下面几条（这里使用 JJWT）
 
 ```xml
-
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
     <version>0.11.5</version>
 </dependency>
 <dependency>
-<groupId>io.jsonwebtoken</groupId>
-<artifactId>jjwt-impl</artifactId>
-<version>0.11.5</version>
-<scope>runtime</scope>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
 </dependency>
 <dependency>
-<groupId>io.jsonwebtoken</groupId>
-<artifactId>jjwt-jackson</artifactId>
-<version>0.11.5</version>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.11.5</version>
 </dependency>
 <dependency>
-<groupId>com.fasterxml.jackson.module</groupId>
-<artifactId>jackson-module-jaxb-annotations</artifactId>
-<version>2.18.0</version>
+    <groupId>com.fasterxml.jackson.module</groupId>
+    <artifactId>jackson-module-jaxb-annotations</artifactId>
+    <version>2.18.0</version>
 </dependency>
 ```
 
@@ -466,7 +459,6 @@ Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql`
 库，所以你要添加依赖
 
 ```xml
-
 <dependency>
     <groupId>org.mindrot</groupId>
     <artifactId>jbcrypt</artifactId>
@@ -522,11 +514,11 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 点击 **[后端](src/main/java/dev/e23/dashstar/handler)** 查看具体实现
 
 #### TIP
-你可以使用 [ApiFox](https://apifox.com/) 或者[PostMan](https://www.postman.com/)测试接口
+你可以使用 [ApiFox](https://apifox.com/) 或者 [PostMan](https://www.postman.com/) 测试接口
 
 #### 网络请求
 ##### JSON 
-大部分网站接受和处理请求都使用 JSON 格式的数据, 本教程也不例外. [ JSON ](https://www.oracle.com/tw/database/what-is-json/) 格式是什么? 
+大部分网站接受和处理请求都使用 JSON 格式的数据, 本教程也不例外. [JSON](https://www.oracle.com/tw/database/what-is-json/) 格式是什么? 
 所以为了能正常接收数据, 我们需要为每次请求的 **请求头** 添加两个参数, `Accept` 和 `Content-Type` 它们的值都是 `application/json` . 
 并且传入的数据的 **请求体** 也要是 JSON 格式的数据. 例如用于注册一个用户名是 `admin`, 密码是 `123456` 的用户, 它的请求体的格式要是这样的:
 
@@ -537,15 +529,15 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 }
 ```
 
-![APIfox截图](assets/apifox.png)
+![ApiFox](./assets/apifox.png)
 
-如果你使用 `APIfox` 发送后得到的数据像这样, 证明你的接口没有问题, 可以与前端对接了.
+如果你使用 `ApiFox` 发送后得到的数据像这样, 证明你的接口没有问题, 可以与前端对接了.
 
 ## 开发（前端）
 
 本教程重点在于后端开发, 所以接下来我将会讲解后端程序员也要了解的前端概念. 为了方便起见, 前端项目使用 [React](https://zh-hans.react.dev/learn) 作为前端框架, 使用 [MUI](https://mui.com/material-ui/getting-started/) 完成界面样式的设计. 下面的内容不会涉及任何有关样式设计的内容.
 
-### 路由 与 页面跳转
+### 路由与页面跳转
 
 > 路由是什么?
 >
@@ -553,25 +545,25 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 
 ![recording](assets/recording.gif)
 
-仔细看我使用红框框选的地址, 在每次页面跳转的时候都发生了改变. 当我点击其中一篇文章, 他就会跳转到 `/articles/ {id}` 然后在这个界面调用对应的接口, 拿到对应的文章并显示出来. 当然, 如果你愿意的话, 设计成 `/abc/ {id}` 也可以.`(虽然我们通常不会这么做)` 我想说的是, 后端接口与路由无关, 事实上它们是分离的. 路由用于跳转到指定的, 我们写好的页面. 而调用 api 获取所有文章是这个界面组件需要做的事, 如果跳转的界面是空的, 那么它不会做任何事. 
+仔细看我使用红框框选的地址, 在每次页面跳转的时候都发生了改变. 当我点击其中一篇文章, 他就会跳转到 `/articles/{id}` 然后在这个界面调用对应的接口, 拿到对应的文章并显示出来. 当然, 如果你愿意的话, 设计成 `/abc/{id}` 也可以.`(虽然我们通常不会这么做)` 我想说的是, 后端接口与路由无关, 事实上它们是分离的. 路由用于跳转到指定的, 我们写好的页面. 而调用 api 获取所有文章是这个界面组件需要做的事, 如果跳转的界面是空的, 那么它不会做任何事. 
 
-**点击 [页面](./web/src/pages) 查看具体实现, 点击 [路由配置](./web/src/router/index.tsx) 查看路由配置**
+在 [这里](./web/src/pages) 查看页面具体实现, 在 [这里](./web/src/router/index.tsx) 查看路由配置
 
-### 网络请求 与 鉴权 
+### 网络请求与鉴权 
 
 一般而言一个网络请求分为 请求头和请求体. 
 
-![请求头](assets/请求头.png)
+![header](./assets/header.png)
 
 例如, 这是一个登录的请求, 可以看到标红的是我们指定的请求头. 而请求体在负载中
 
-![payload](assets/payload.png)
+![payload](./assets/payload.png)
 
-点击 [源码](./web/src/utils/axios.ts) 查看我是如何配置网络请求的请求头的. 
+你可以点击 [这里](./web/src/utils/axios.ts) 查看我是如何配置网络请求的请求头的. 
 
 登录之后可以获得一个 token 用于后续的鉴权. 
 
-![response](assets/response.png)
+![Response](./assets/response.png)
 
 为了区分不同的用户的权限, 我在 [源码](./web/src/stores/auth.ts) 存储了登录获得的 token .
 
@@ -579,7 +571,7 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 - 并且如果文章不是自己创建的, 他无法修改它. 
 - 并且即使登陆了, 如果你不是管理员, 你也无法创建文章.
 
-![前端权限](assets/前端权限.png)
+![Frontend Permission](./assets/frontend-permission.png)
 
 可以看到普通用户没有修改和创建文章的权力. 
 
@@ -592,19 +584,18 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 
 使用浏览器的调试工具可以看到登陆后存储在本地的内容. 
 
-![浏览器调试](assets/浏览器调试.png)
+![Debug](./assets/debug.png)
 
-点击 [源码](./web/src/stores) 查看我持久化存储了那些内容, 以及如何持久化存储的. 
+点击 [这里](./web/src/stores) 查看我持久化存储了那些内容, 以及如何持久化存储的.
 
 ## 附录
 
 ### 附加题
 
-- 仔细观察有关用户的输出，真的应该携带密码的哈希值吗？如果我不想携带密码哈希值输出，请问我该怎么办？（+5）
-- 身为管理员，竟然不能删除评论，万一别人评论了不好的话怎么办？（+10）
-- 文章太多了，一个页面（首页）如果显示全部的文章，不仅看上去不美观，性能也会大打折扣。请问使用什么方法解决这个问题？ （+10）
-- 一个成熟的博客应该有一个分类系统，或者标签系统，这样能够帮助用户快速检索想看的文章，请问你能够在此基础上设计出一个标签或者分类系统吗？（+15）
-- 前端太素了，能不能好看一点？（需要你自行设计页面，这涉及很多内容，React 和 Mui 都需要点理解，当然，如果你足够强的话，可以把前端推翻重来）（+15）
+- 仔细观察有关用户的输出，真的应该携带密码的哈希值吗？如果我不想携带密码哈希值输出，请问我该怎么办？（后端 +5）
+- 身为管理员，竟然不能删除评论，万一别人评论了不好的话怎么办？（后端 +10）（前端 +10）
+- 文章太多了，一个页面（首页）如果显示全部的文章，不仅看上去不美观，性能也会大打折扣。请问使用什么方法解决这个问题？ （后端 +10）（前端 +10）
+- 一个成熟的博客应该有一个分类系统，或者标签系统，这样能够帮助用户快速检索想看的文章，请问你能够在此基础上设计出一个标签或者分类系统吗？（后端 +10）（前端 +10）
 
 ### 小技巧
 
