@@ -1,3 +1,5 @@
+// 主界面.显示所有文章的列表, 可以跳转到 ShowArticlePage.tsx 以显示对应的文章内容. 也可以跳转到登陆或者注册界面.
+
 import { useEffect, useState } from "react";
 import {
     Box,
@@ -25,6 +27,7 @@ export default function HomePage() {
     const authStore = useAuthStore();
     const siteStore = useSiteStore();
     const navigator = useNavigate();
+    const [users, setUsers] = useState<Array<string>>();
 
     const [articles, setArticles] = useState<Array<Article>>();
 
@@ -33,9 +36,13 @@ export default function HomePage() {
             (res) => {
                 const r = res.data;
                 setArticles(r.data?.reverse());
+                let userName = r.data.map((item: any) => item.author.username);
+                userName = userName.reverse();
+                setUsers(userName);
             },
         );
     }, []);
+
 
     return (
         <Container maxWidth="md" sx={{ py: 4 }}>
@@ -55,7 +62,7 @@ export default function HomePage() {
                         mb: 4,
                         color: "primary.main",
                     }}>
-                    我的文章
+                    所有文章
                 </Typography>
 
                 {authStore?.user?.role === "admin" && (
@@ -139,6 +146,10 @@ export default function HomePage() {
                                                         }}
                                                         secondary={new Date(Number(e.created_at) * 1000).toLocaleString()}
                                                     />
+                                                    <ListItemText
+                                                        secondary={users ? "Write BY: " + users[index] : ""}
+                                                    />
+
                                                 </Button>
 
 

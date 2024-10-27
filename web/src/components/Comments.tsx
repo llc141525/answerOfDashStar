@@ -1,3 +1,5 @@
+// 评论区组件
+
 import { Avatar, Box, Button, Card, Divider, Grid2, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { api } from "@/utils/axios.ts";
@@ -14,7 +16,7 @@ function MyComment({ comment, firstName, created_at }: {
             <Grid2 container sx={{ backgroundColor: "#f0f0f02d" }}>
                 <Grid2 display="flex" sx={{ margin: 2 }}>
                     <Avatar sx={{ marginRight: 4, alignContent: "center" }}>
-                        {firstName?.[0]}
+                        {firstName?.slice(0, 4)}
                     </Avatar>
                     <Box>
                         {comment ? (
