@@ -1,8 +1,6 @@
 # Java 高级编程（JavaEE 程序设计与应用开发）期末作业教程
 
-本教程及相关代码由后端 [@ElaBosak233](https://github.com/elabosak233) 和前端 [@llc141525](https://github.com/llc141525)
-撰写于 2024 学年第一学期，用于给 23 届学生在完成 Java
-高级编程期末作业时提供指导。
+本教程及相关代码由后端 [@ElaBosak233](https://github.com/elabosak233) 和前端 [@llc141525](https://github.com/llc141525) 撰写于 2024 学年第一学期，用于给 23 届学生在完成 Java 高级编程期末作业时提供指导。
 
 ## 前言
 
@@ -178,11 +176,9 @@ Tomcat 的地址进行配置。
 
 ![Tomcat Config](./assets/tomcat-config.png)
 
-此时点击右上角的绿色三角图标，即可启动项目，启动后 IDEA
-会自动打开浏览器，访问 `http://localhost:8080/api/hello-world`，如果看到 `Hello, World!`，那么恭喜你，你的项目已经成功启动了。
+此时点击右上角的绿色三角图标，即可启动项目，启动后 IDEA 会自动打开浏览器，访问 `http://localhost:8080/api/hello-world`，如果看到 `Hello, World!`，那么恭喜你，你的项目已经成功启动了。
 
-如果遇到 Tomcat 无法启动，并且 Tomcat Localhost
-日志中报错为 `java.lang.NoClassDefFoundError: jakarta/activation/Datasource` 的话，那么你需要在 `pom.xml` 中添加下面这条依赖
+如果遇到 Tomcat 无法启动，并且 Tomcat Localhost 日志中报错为 `java.lang.NoClassDefFoundError: jakarta/activation/Datasource` 的话，那么你需要在 `pom.xml` 中添加下面这条依赖
 
 ```xml
 <dependency>
@@ -192,9 +188,7 @@ Tomcat 的地址进行配置。
 </dependency>
 ```
 
-顺便我们来检验一下 MySQL 是否能够连接，点击 IDEA 右侧侧边栏的数据库图标，然后点击 `+`
-，数据源，MySQL，然后按照下图配置。如果你需要下载缺少的驱动文件，直接点击下载即可。用户名和密码都是 `root`
-，配置完成后点击测试连接，成功后即可点击确定。恭喜你，MySQL 也是能用的了。
+顺便我们来检验一下 MySQL 是否能够连接，点击 IDEA 右侧侧边栏的数据库图标，然后点击 `+`，数据源，MySQL，然后按照下图配置。如果你需要下载缺少的驱动文件，直接点击下载即可。用户名和密码都是 `root`，配置完成后点击测试连接，成功后即可点击确定。恭喜你，MySQL 也是能用的了。
 
 ![MySQL Config](./assets/mysql-config.png)
 
@@ -361,6 +355,8 @@ Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql`
 还没完，我们需要在工件包中创建一个 `listener` 子包，创建一个新类 `HibernateListener`
 ，写入[这里面](./src/main/java/dev/e23/dashstar/listener/HibernateListener.java)的内容。
 
+你可能要问，为什么需要一个 `HibernateListener` 呢，因为我希望能够在 Servlet 容器启动的时候，Hibernate 能够自动与数据库取得连接（即获得 `EntityManagerFactory`），并且自动创建数据表。
+
 然后你会发现，我们用到了一个叫 `HibernateUtil` 的工具类，这个工具是来创建 Hibernate 的 `EntityManagerFactory`
 的，并且可以给仓库层分发 `EntityManager`（你一定会用到的）。
 
@@ -393,9 +389,7 @@ Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql`
 你可以在[这里](./src/main/java/dev/e23/dashstar/security/AuthenticationFilter.java)查看过滤器 `AuthenticationFilter`
 的实现。
 
-并且我们还需要一个 `@Secured`
-注解（注意是注解，不是注释，注解是可编程的），用来注解在需要鉴权的控制器上（在讲控制器之前，你可以把控制器理解为请求进来时经过的方法）。你可以在[这里](./src/main/java/dev/e23/dashstar/security/Secured.java)
-查看 `@Secured` 注解的定义，定义其实没什么实际含义，真正的逻辑已经写在 `AuthenticationFilter` 的 `extractRoles` 方法中了。
+并且我们还需要一个 `@Secured` 注解（注意是注解，不是注释，注解是可编程的），用来注解在需要鉴权的控制器上（在讲控制器之前，你可以把控制器理解为请求进来时经过的方法）。你可以在[这里](./src/main/java/dev/e23/dashstar/security/Secured.java)查看 `@Secured` 注解的定义，定义其实没什么实际含义，真正的逻辑已经写在 `AuthenticationFilter` 的 `extractRoles` 方法中了。
 
 当然还有需要注意的点，就是我们想要使用 JWT，但我们并没有添加 JWT 相关的依赖，所以，别忘了添加下面几条（这里使用 JJWT）
 
@@ -433,8 +427,7 @@ Hibernate 的自动迁移功能。这样一来，你就不需要使用 `xxx.sql`
 
 > 什么是 REST 控制器？
 >
-> REST 控制器是遵循 REST（Representational State Transfer）架构风格的 Web 应用程序中的一个组件，它负责处理传入的 HTTP
-> 请求并将它们映射到相应的业务逻辑处理上。
+> REST 控制器是遵循 REST（Representational State Transfer）架构风格的 Web 应用程序中的一个组件，它负责处理传入的 HTTP 请求并将它们映射到相应的业务逻辑处理上。
 >
 > 简单来说，就是你的应用程序的接口，外面的请求只能通过这些接口来使用你的业务。而 REST 则是一种要求，要求我们将所有的接口都按照
 **资源** 进行分类，资源可以简单地理解为我们所定义的模型们。
@@ -495,32 +488,35 @@ REST 的设计理念，它到底应该被归为文章，还是应该被归为评
 
 	1. 获取所有文章 => `http://localhost:8080/api/articles`
 	2. 获取所有用户 => `http://localhost:8080/api/articles`
-	3. 根据用户 id 获取用户信息 => `http://localhost:8080/api/users/ {id}`
-	4. 根据文章 id 获取所有评论 => `http://localhost:8080/api/articles/ {id} /comments`
-	5. 根据文章 id 获取对应的文章 => `http://localhost:8080/api/articles/ {id}`
+	3. 根据用户 id 获取用户信息 => `http://localhost:8080/api/users/{id}`
+	4. 根据文章 id 获取所有评论 => `http://localhost:8080/api/articles/{id}/comments`
+	5. 根据文章 id 获取对应的文章 => `http://localhost:8080/api/articles/{id}`
 
 - **POST**
 
-	5. 注册 => `http://localhost:8080/api/users/register`
-	6. 登录 => `http://localhost:8080/api/users/login`
-	7. 发送评论 => `http://localhost:8080/api/comments`
-	8. 发表文章 => `http://localhost:8080/api/articles`
+	6. 注册 => `http://localhost:8080/api/users/register`
+	7. 登录 => `http://localhost:8080/api/users/login`
+	8. 发送评论 => `http://localhost:8080/api/comments`
+	9. 发表文章 => `http://localhost:8080/api/articles`
 
 - **PUT**
 
-	9. 更新文章 => `http://localhost:8080/api/articles`
-		
+	10. 更新文章 => `http://localhost:8080/api/articles`
+
 
 _注意: 访问 7, 9 需要携带对应的文章的 ID_ 
 
-点击 **[后端](src/main/java/dev/e23/dashstar/handler)** 查看具体实现
+点击 [这里](src/main/java/dev/e23/dashstar/handler) 查看后端具体实现
 
-#### TIP
+#### 小技巧
+
 你可以使用 [ApiFox](https://apifox.com/) 或者 [PostMan](https://www.postman.com/) 测试接口
 
 #### 网络请求
-##### JSON 
-大部分网站接受和处理请求都使用 JSON 格式的数据, 本教程也不例外. [JSON](https://www.oracle.com/tw/database/what-is-json/) 格式是什么? 
+
+##### JSON
+
+大部分网站接受和处理请求都使用 JSON 格式的数据, 本教程也不例外. 你可以在[这里](https://www.oracle.com/tw/database/what-is-json/)查看 JSON 格式是什么? 
 所以为了能正常接收数据, 我们需要为每次请求的 **请求头** 添加两个参数, `Accept` 和 `Content-Type` 它们的值都是 `application/json` . 
 并且传入的数据的 **请求体** 也要是 JSON 格式的数据. 例如用于注册一个用户名是 `admin`, 密码是 `123456` 的用户, 它的请求体的格式要是这样的:
 
@@ -551,7 +547,7 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 
 仔细看我使用红框框选的地址, 在每次页面跳转的时候都发生了改变. 当我点击其中一篇文章, 他就会跳转到 `/articles/{id}` 然后在这个界面调用对应的接口, 拿到对应的文章并显示出来. 当然, 如果你愿意的话, 设计成 `/abc/{id}` 也可以.`(虽然我们通常不会这么做)` 我想说的是, 后端接口与路由无关, 事实上它们是分离的. 路由用于跳转到指定的, 我们写好的页面. 而调用 api 获取所有文章是这个界面组件需要做的事, 如果跳转的界面是空的, 那么它不会做任何事. 
 
-在 [这里](./web/src/pages) 查看页面具体实现, 在 [这里](./web/src/router/index.tsx) 查看路由配置
+在[这里](./web/src/pages)查看页面具体实现, 在[这里](./web/src/router/index.tsx)查看路由配置
 
 ### 网络请求与鉴权 
 
@@ -563,13 +559,13 @@ _注意: 访问 7, 9 需要携带对应的文章的 ID_
 
 ![payload](./assets/payload.png)
 
-你可以点击 [这里](./web/src/utils/axios.ts) 查看我是如何配置网络请求的请求头的. 
+你可以点击[这里](./web/src/utils/axios.ts)查看我是如何配置网络请求的请求头的. 
 
 登录之后可以获得一个 token 用于后续的鉴权. 
 
 ![Response](./assets/response.png)
 
-为了区分不同的用户的权限, 我在 [源码](./web/src/stores/auth.ts) 存储了登录获得的 token .
+为了区分不同的用户的权限, 我在[源码](./web/src/stores/auth.ts)存储了登录获得的 token .
 
 - 当用户没有登录的时候, 那么他就没有 token, 因此他无法创建文章, 修改文章.  
 - 并且如果文章不是自己创建的, 他无法修改它. 
