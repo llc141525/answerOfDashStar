@@ -5,7 +5,6 @@ import dev.e23.dashstar.util.HibernateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
-import org.testng.annotations.Test;
 
 
 import java.util.List;

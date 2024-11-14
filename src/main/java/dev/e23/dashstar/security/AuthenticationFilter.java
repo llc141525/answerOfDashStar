@@ -3,7 +3,6 @@ package dev.e23.dashstar.security;
 import dev.e23.dashstar.model.User;
 import dev.e23.dashstar.repository.UserRepository;
 import dev.e23.dashstar.util.JwtUtil;
-import io.jsonwebtoken.MalformedJwtException;
 import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 @Secured
 @Provider
