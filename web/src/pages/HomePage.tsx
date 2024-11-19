@@ -1,23 +1,25 @@
 // 主界面.显示所有文章的列表, 可以跳转到 ShowArticlePage.tsx 以显示对应的文章内容. 也可以跳转到登陆或者注册界面.
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Box,
     Button,
+    Card,
+    CardContent,
+    Container,
+    Divider,
     IconButton,
     List,
     ListItem,
-    Container,
-    Typography,
-    Paper,
-    Divider,
     ListItemText,
-    Card,
-    CardContent,
+    Pagination,
+    PaginationItem,
+    Paper,
     Stack,
+    Typography,
 } from "@mui/material";
 import { Article } from "@/models/article.ts";
-import { Create, Add } from "@mui/icons-material";
+import { Add, Create } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/stores/auth.ts";
 import { api } from "@/utils/axios.ts";
@@ -28,21 +30,25 @@ export default function HomePage() {
     const siteStore = useSiteStore();
     const navigator = useNavigate();
     const [users, setUsers] = useState<Array<string>>();
-
+    const [totalPage, setTotalPage] = useState<number>(1);
     const [articles, setArticles] = useState<Array<Article>>();
-
+    const [curPage, setCurPage] = useState<number>(1);
     useEffect(() => {
-        api().get("/articles").then(
-            (res) => {
+        api()
+            .get("/articles")
+            .then((res) => {
                 const r = res.data;
                 setArticles(r.data?.reverse());
+                setTotalPage(Math.floor(r.data.length / 5 + 1));
                 let userName = r.data.map((item: any) => item.author.username);
                 userName = userName.reverse();
                 setUsers(userName);
-            },
-        );
+            });
     }, []);
 
+    function handlePageChange(_e: React.ChangeEvent<unknown>, value: number) {
+        setCurPage(value);
+    }
 
     return (
         <Container maxWidth="md" sx={{ py: 4 }}>
@@ -61,7 +67,8 @@ export default function HomePage() {
                         fontWeight: 600,
                         mb: 4,
                         color: "primary.main",
-                    }}>
+                    }}
+                >
                     所有文章
                 </Typography>
 
@@ -134,8 +141,12 @@ export default function HomePage() {
                                                         textTransform: "none",
                                                     }}
                                                     onClick={() => {
-                                                        navigator(`/articles/${e.id}`);
-                                                        siteStore.setCurrentTitle(e.title || "");
+                                                        navigator(
+                                                            `/articles/${e.id}`
+                                                        );
+                                                        siteStore.setCurrentTitle(
+                                                            e.title || ""
+                                                        );
                                                     }}
                                                 >
                                                     <ListItemText
@@ -144,26 +155,39 @@ export default function HomePage() {
                                                             variant: "h6",
                                                             color: "text.primary",
                                                         }}
-                                                        secondary={new Date(Number(e.created_at) * 1000).toLocaleString()}
+                                                        secondary={new Date(
+                                                            Number(
+                                                                e.created_at
+                                                            ) * 1000
+                                                        ).toLocaleString()}
                                                     />
                                                     <ListItemText
-                                                        secondary={users ? "Write BY: " + users[index] : ""}
+                                                        secondary={
+                                                            users
+                                                                ? "Write BY: " +
+                                                                  users[index]
+                                                                : ""
+                                                        }
                                                     />
-
                                                 </Button>
 
-
-                                                {authStore?.user?.role === "admin" && (
+                                                {authStore?.user?.role ===
+                                                    "admin" && (
                                                     <IconButton
                                                         color="primary"
                                                         onClick={() => {
-                                                            navigator(`/articles/${e.id}/edit`);
-                                                            siteStore.setCurrentTitle("编辑");
+                                                            navigator(
+                                                                `/articles/${e.id}/edit`
+                                                            );
+                                                            siteStore.setCurrentTitle(
+                                                                "编辑"
+                                                            );
                                                         }}
                                                         sx={{
                                                             ml: 2,
                                                             "&:hover": {
-                                                                bgcolor: "primary.light",
+                                                                bgcolor:
+                                                                    "primary.light",
                                                                 color: "primary.contrastText",
                                                             },
                                                         }}
@@ -178,6 +202,32 @@ export default function HomePage() {
                             </Box>
                         ))}
                     </List>
+                )}
+                {totalPage > 0 ? (
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <Pagination
+                            count={totalPage}
+                            onChange={handlePageChange}
+                            page={curPage}
+                            color="primary"
+                            size="large"
+                            sx={{ my: 2 }}
+                            renderItem={(item) => (
+                                <PaginationItem
+                                    {...item}
+                                    sx={{
+                                        ml: 2,
+                                        "&:hover": {
+                                            bgcolor: "primary.light",
+                                            color: "primary.contrastText",
+                                        },
+                                    }}
+                                />
+                            )}
+                        ></Pagination>
+                    </Box>
+                ) : (
+                    <></>
                 )}
             </Paper>
         </Container>
