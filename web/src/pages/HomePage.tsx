@@ -6,6 +6,7 @@ import {
     Button,
     Card,
     CardContent,
+    Chip,
     Container,
     Divider,
     IconButton,
@@ -35,16 +36,16 @@ export default function HomePage() {
     const [curPage, setCurPage] = useState<number>(1);
     useEffect(() => {
         api()
-            .get("/articles")
+            .get(`/articles/page/${curPage}`)
             .then((res) => {
                 const r = res.data;
                 setArticles(r.data?.reverse());
-                setTotalPage(Math.floor(r.data.length / 5 + 1));
+                setTotalPage(r.totalPage);
                 let userName = r.data.map((item: any) => item.author.username);
                 userName = userName.reverse();
                 setUsers(userName);
             });
-    }, []);
+    }, [curPage]);
 
     function handlePageChange(_e: React.ChangeEvent<unknown>, value: number) {
         setCurPage(value);
@@ -168,6 +169,10 @@ export default function HomePage() {
                                                                   users[index]
                                                                 : ""
                                                         }
+                                                    />
+                                                    <Chip
+                                                        label={"label"}
+                                                        color={"error"}
                                                     />
                                                 </Button>
 
