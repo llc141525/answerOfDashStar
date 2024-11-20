@@ -50,6 +50,7 @@ public class CommentHandler {
     // 调用 DAO 层的方法即可
     @DELETE
     @Path("/{id}") // /api/comments/{id}
+    @Secured({"admin"})
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteComment(@PathParam("id") Integer id) {

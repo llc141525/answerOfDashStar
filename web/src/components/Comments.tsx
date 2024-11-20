@@ -29,7 +29,7 @@ function MyComment({
     id?: number;
 }) {
     const date = new Date(Number(created_at) * 1000);
-
+    const authStore = useAuthStore();
     // 附加题删除评论
     // 前端调用接口
     function toDelete() {
@@ -61,6 +61,7 @@ function MyComment({
                     </Box>
                     <Box sx={{ ml: 2 }}>
                         <IconButton
+                            disabled={authStore.user?.role !== "admin"}
                             color="primary"
                             onClick={toDelete}
                             sx={{
