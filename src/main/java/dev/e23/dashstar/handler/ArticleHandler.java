@@ -33,7 +33,7 @@ public class ArticleHandler {
     @GET  // 指定 HTTP GET 请求
     @Path("/page/{page}")  // /api/articles/page
     @Produces(MediaType.APPLICATION_JSON)  // 指定返回的数据类型是 JSON
-    public Response getAllArticles(@PathParam("page") Integer page) {
+    public Response getArticlesByPage(@PathParam("page") Integer page) {
         List<Article> articles = articleRepository.findAll();
         int begin = (page - 1) * 5;
         int end = Math.min(begin + 5, articles.size());
@@ -43,6 +43,18 @@ public class ArticleHandler {
         res.put("totalPage", articles.size() / 5 + 1);
         return Response.status(Response.Status.OK).entity(res).build();
     }
+
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllArticles() {
+        List<Article> articles = articleRepository.findAll();
+        Map<String, Object> res = new HashMap<>();
+        res.put("code", Response.Status.OK);
+        res.put("data", articles);
+        return Response.status(Response.Status.OK).entity(res).build();
+    }
+
 
     @GET  // 指定 HTTP GET 请求
     @Path("/{id}")  // /api/articles/{id}

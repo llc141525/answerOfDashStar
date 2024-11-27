@@ -24,6 +24,8 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/stores/auth.ts";
 import { api } from "@/utils/axios.ts";
 import useSiteStore from "@/stores/site.ts";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import { MD5 } from "crypto-js";
 
 export default function HomePage() {
@@ -46,24 +48,29 @@ export default function HomePage() {
                 const r = res.data;
                 setArticles(r.data?.reverse() || []);
                 setTotalPage(r.totalPage || 1);
-
-                // 提取标签和作者信息
-                const labels = Array.from(
-                    new Set(r.data.map((item: Article) => item.label))
-                );
-                setAllLabel(labels);
-
                 const userName = r.data
                     .map((item: Article) => item.author?.username || "匿名")
                     .reverse();
                 setUsers(userName);
+            });
+    }, [curPage]);
 
+    useEffect(() => {
+        api()
+            .get(`/articles`)
+            .then((r) => {
+                const data = r.data;
+
+                const labels: Array<string> = Array.from(
+                    new Set(data.data.map((i: Article) => i.label))
+                );
+                setAllLabel(labels);
                 // 仅在首次加载时设置初始标签
                 if (selectLabel.length === 0) {
                     setSelectLabel(labels);
                 }
             });
-    }, [curPage]);
+    }, [selectLabel]);
 
     // 动态颜色生成
     function getColor(label: string) {
