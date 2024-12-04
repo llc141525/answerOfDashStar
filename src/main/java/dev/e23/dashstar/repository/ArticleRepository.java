@@ -29,6 +29,33 @@ public class ArticleRepository {
         return articles;
     }
 
+    // 查询执行页数的文章
+    public List<Article> findByPage(Integer begin, Integer offset) throws PersistenceException {
+        EntityManager em = HibernateUtil.getEntityManager();
+        List<Article> articles = null;
+        try {
+            em.getTransaction().begin();
+
+            // 创建查询
+            articles = em.createQuery("SELECT a FROM Article a ORDER BY a.id", Article.class)
+                    .setFirstResult(begin) // 从第 begin 行开始
+                    .setMaxResults(offset)  // 限制结果集的大小
+                    .getResultList();
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback(); // 在出现异常时回滚事务
+            }
+            throw new RuntimeException(e);
+        } finally {
+            em.close(); // 确保 EntityManager 关闭
+        }
+
+        return articles; // 返回查询结果
+    }
+
+
     public Article findByID(Integer id) throws PersistenceException {
         EntityManager em = HibernateUtil.getEntityManager();
         Article article = null;

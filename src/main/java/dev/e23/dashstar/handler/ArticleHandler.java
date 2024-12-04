@@ -31,16 +31,15 @@ public class ArticleHandler {
     private UserRepository userRepository;
 
     @GET  // 指定 HTTP GET 请求
-    @Path("/page/{page}")  // /api/articles/page
+    @Path("/page/{page}")  // /api/articles/page/{page} 注意, 这里不要写 "/{page}" 会和下面的查询所有文章重复
     @Produces(MediaType.APPLICATION_JSON)  // 指定返回的数据类型是 JSON
     public Response getArticlesByPage(@PathParam("page") Integer page) {
-        List<Article> articles = articleRepository.findAll();
-        int begin = (page - 1) * 5;
-        int end = Math.min(begin + 5, articles.size());
+        List<Article> articles = articleRepository.findByPage((page - 1) * 5, 5);
+        int totalPage = articleRepository.findAll().size() / 5 + 1;
         Map<String, Object> res = new HashMap<>();
         res.put("code", Response.Status.OK);
-        res.put("data", articles.subList(begin, end));
-        res.put("totalPage", articles.size() / 5 + 1);
+        res.put("data", articles);
+        res.put("totalPage", totalPage);
         return Response.status(Response.Status.OK).entity(res).build();
     }
 

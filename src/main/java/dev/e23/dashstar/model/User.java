@@ -21,7 +21,7 @@ public class User implements Serializable {
     @Column(name = "nickname")  // 表示这个字段对应的数据库表中的列名是 nickname
     private String nickname;
 
-    //     附加题：取消密码显示
+    // 附加题：取消密码显示
     // 出于安全性考虑, 后端通常不会把密码传送到前端, 但是不能直接使用 @JsonIgnore, 因为这样会导致原本的注册登录功能出错.
     // 因此我们应该同意密码的反序列化而阻止它的序列化, 简单的说就是不上传密码但是能接收密码
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

@@ -77,11 +77,6 @@ export default function HomePage() {
         return "#" + MD5(label).toString().slice(0, 6);
     }
 
-    // 分页变化
-    function handlePageChange(_e: React.ChangeEvent<unknown>, value: number) {
-        setCurPage(value);
-    }
-
     // 搜索框
     function SearchBox() {
         function handleSearchChange(
@@ -282,7 +277,12 @@ export default function HomePage() {
                     <Box sx={{ display: "flex", justifyContent: "center" }}>
                         <Pagination
                             count={totalPage}
-                            onChange={handlePageChange}
+                            onChange={(
+                                _e: React.ChangeEvent<unknown>,
+                                val: number
+                            ) => {
+                                setCurPage(val);
+                            }}
                             page={curPage}
                             color="primary"
                             size="large"
