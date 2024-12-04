@@ -65,10 +65,6 @@ export default function HomePage() {
                     new Set(data.data.map((i: Article) => i.label))
                 );
                 setAllLabel(labels);
-                // 仅在首次加载时设置初始标签
-                if (selectLabel.length === 0) {
-                    setSelectLabel(labels);
-                }
             });
     }, [selectLabel]);
 
@@ -108,6 +104,7 @@ export default function HomePage() {
     }
 
     return (
+        // 所有文章文字+搜索框+新建文章按钮
         <Container maxWidth="md" sx={{ py: 4 }}>
             {/* 页面标题和新建按钮 */}
             <Stack
@@ -129,6 +126,7 @@ export default function HomePage() {
                     所有文章
                 </Typography>
 
+                {/*搜索框*/}
                 <SearchBox />
 
                 <Button
@@ -172,7 +170,8 @@ export default function HomePage() {
                         {articles.map((e: Article, index: number) => (
                             <Box key={e.id}>
                                 {index > 0 && <Divider />}
-                                {selectLabel.includes(e.label || "") && (
+                                {(selectLabel.includes(e.label || "") ||
+                                    selectLabel.length === 0) && (
                                     <ListItem
                                         sx={{
                                             "&:hover": {
